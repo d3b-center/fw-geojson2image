@@ -1,0 +1,47 @@
+{
+  "name": "geojson-to-image",
+  "label": "GeoJSON2image: Generate image with QuPath generated GeoJSON file.",
+  "description": "This tool can be used to generate an image with a GeoJSON file.",
+  "author": "D3b-TIRU",
+  "maintainer": "D3b-TIRU <flywheel@d3b.center>",
+  "url": " ",
+  "source": "https://github.com/d3b-center/fw-geojson2image/tree/main",
+  "version": "0.0.0-1",
+  "license": "Apache-2.0",
+  "custom": {
+    "flywheel": {
+      "suite": "D3b"
+    },
+    "gear-builder": {
+      "category": "utility",
+      "image": "chop.flywheel.io/geojson2image:0.0.0-1"
+    }
+  },
+  "inputs": {
+    "input_file": {
+      "base": "file",
+      "description": "GeoJSON file."
+    },
+    "api-key": {
+      "base": "api-key",
+      "read-only": true
+    }
+  },
+  "config": {
+    "debug": {
+      "default": false,
+      "description": "Log debug messages",
+      "type": "boolean"
+    }
+  },
+  "environment": {
+    "PATH": "/opt/poetry/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "PYTHON_VERSION": "3.9.7",
+    "PIP_NO_CACHE_DIR": "0",
+    "POETRY_HOME": "/opt/poetry",
+    "POETRY_VERSION": "1.1.11",
+    "POETRY_VIRTUALENVS_CREATE": "false",
+    "FLYWHEEL": "/flywheel/v0"
+  },
+  "command": "python run.py"
+}
