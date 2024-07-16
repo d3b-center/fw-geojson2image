@@ -51,21 +51,23 @@ def create_labeled_image(gj_file, output_path):
     for json_obj in gj["features"]:
         if json_obj["properties"]["objectType"] == "detection": # if it's a QuPath detection
             # get the polygon coordinates
-            these_coords = json_obj["geometry"]["coordinates"][0]
-            # transform into the format needed for PIL
-            formatted_coords = format_coordinates(these_coords)
-            # remove edge nuclei
-            is_edge_case = detect_edge_polygons(formatted_coords, img_dims[0], img_dims[0])
-            if is_edge_case == 0:
-                # make a unique RGB value for this polygon
-                unique_color = 0
-                while unique_color == 0:
-                    color_code = (random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255))
-                    if color_code not in used_colors:
-                        used_colors.append(color_code)
-                        unique_color = 1
-                # draw the polygon
-                draw.polygon(formatted_coords, fill = color_code)
+            for these_coords in json_obj["geometry"]["coordinates"]:
+                if len(these_coords) == 1:
+                    these_coords = these_coords[0]
+                # transform into the format needed for PIL
+                formatted_coords = format_coordinates(these_coords)
+                # remove edge nuclei
+                is_edge_case = detect_edge_polygons(formatted_coords, img_dims[0], img_dims[0])
+                if is_edge_case == 0:
+                    # make a unique RGB value for this polygon
+                    unique_color = 0
+                    while unique_color == 0:
+                        color_code = (random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255))
+                        if color_code not in used_colors:
+                            used_colors.append(color_code)
+                            unique_color = 1
+                    # draw the polygon
+                    draw.polygon(formatted_coords, fill = color_code)
 
     img3 = Image.blend(img, img2, 1)
     # img3 = Image.blend(img, img2, 0.5) # transparent overlay
