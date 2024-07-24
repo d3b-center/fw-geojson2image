@@ -48,10 +48,10 @@ def run(client: CoreClient, gtk_context: GearToolkitContext):
 
     # run the main processes & upload output file back to acquisition
     print(f'Processing GeoJSON file: {input_file_name}')
-    base_fn   = input_file_name.split('.geojson')[0]
-    output_fn = f'{base_fn}_labeled_mask.png'
+    base_fn   = input_file_name.split('.geojson')[0] # full path minus the file ending
+    output_fn = f'{base_fn}_labeled_mask.png' # add desired file ending to full path
     create_labeled_image(input_file_name, output_fn)
 
-    print(f'Uploading to acquisition: {acq.label}/{output_fn}')
+    print(f'Uploading to {acq.label} acquisition: {output_fn}')
     acq.upload_file(f'{output_fn}')
     os.remove(f'{output_fn}') # remove from instance to save space
