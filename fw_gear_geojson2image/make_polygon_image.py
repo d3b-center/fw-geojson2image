@@ -42,7 +42,7 @@ def create_labeled_image(gj_file, output_path):
     img_dims = gj["features"][0]["geometry"]["coordinates"][0][2]
     print(f'               image dimensions: {img_dims}')
 
-    img = Image.new('RGB', (img_dims[0], img_dims[0])) # create a black image
+    img = Image.new('RGB', (img_dims[0], img_dims[1])) # create a black image
 
     img2 = img.copy()
     draw = ImageDraw.Draw(img2)
