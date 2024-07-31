@@ -32,6 +32,11 @@ def detect_edge_polygons(poly_coords, img_width, img_height):
     else:
         return 0
 
+def find_geojson_annotation_coordinates(json_dict):
+    for feature in json_dict["features"]:
+        if feature.properties['objectType'] == 'annotation':
+            return feature
+
 # ================================================================
 
 def create_labeled_image(gj_file, output_path):
@@ -39,7 +44,20 @@ def create_labeled_image(gj_file, output_path):
     with open(gj_file) as f:
         gj = geojson.load(f)
 
-    img_dims = gj["features"][0]["geometry"]["coordinates"][0][2]
+    # need to grab only properties > objectType > annotation block
+    # not the first block in the JSON
+    annotation = find_geojson_annotation_coordinates(gj)
+    if len(annotation["geometry"]["coordinates"][0]) > 5: # handle MultiPolygon annotations
+        max_x=0
+        max_y=0
+        for temp_x, temp_y in annotation["geometry"]["coordinates"][0]:
+            if temp_x > max_x:
+                max_x = temp_x
+            if temp_y > max_y:
+                max_y = temp_y
+        img_dims = [max_x, max_y]
+    else:
+        img_dims = annotation["geometry"]["coordinates"][0][2]
     print(f'               image dimensions: {img_dims}')
 
     img = Image.new('RGB', (img_dims[0], img_dims[1])) # create a black image
