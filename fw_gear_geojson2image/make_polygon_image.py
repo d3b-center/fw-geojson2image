@@ -47,17 +47,33 @@ def create_labeled_image(gj_file, output_path):
     # need to grab only properties > objectType > annotation block
     # not the first block in the JSON
     annotation = find_geojson_annotation_coordinates(gj)
-    if len(annotation["geometry"]["coordinates"][0]) > 5: # handle MultiPolygon annotations
+    if annotation["geometry"]["type"] == 'MultiPolygon': # handle MultiPolygon annotations (list of lists)
         max_x=0
         max_y=0
-        for temp_x, temp_y in annotation["geometry"]["coordinates"][0]:
-            if temp_x > max_x:
-                max_x = temp_x
-            if temp_y > max_y:
-                max_y = temp_y
+        for obj in annotation["geometry"]["coordinates"]:
+            for temp_x, temp_y in obj[0]:
+                if temp_x > max_x:
+                    max_x = temp_x
+                if temp_y > max_y:
+                    max_y = temp_y
+        max_x = math.ceil(max_x)
+        max_y = math.ceil(max_y)
         img_dims = [max_x, max_y]
-    else:
-        img_dims = annotation["geometry"]["coordinates"][0][2]
+    else: # otherwise it's a Polygon
+        if len(annotation["geometry"]["coordinates"][0]) > 5:
+            max_x=0
+            max_y=0
+            for temp_x, temp_y in annotation["geometry"]["coordinates"][0]:
+                if temp_x > max_x:
+                    max_x = temp_x
+                if temp_y > max_y:
+                    max_y = temp_y
+            max_x = math.ceil(max_x)
+            max_y = math.ceil(max_y)
+            img_dims = [max_x, max_y]
+        else:
+            img_dims = annotation["geometry"]["coordinates"][0][2] # when we just have the rectangle coordinates
+
     print(f'               image dimensions: {img_dims}')
 
     img = Image.new('RGB', (img_dims[0], img_dims[1])) # create a black image
